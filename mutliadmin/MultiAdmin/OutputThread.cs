@@ -1,13 +1,14 @@
-﻿using System;//why is a bullet here?
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using MultiAdmin.MultiAdmin;
+//why is a bullet here?
 
 namespace MultiAdmin
 {
-	class OutputThread
+	internal class OutputThread
 	{
 		public static readonly Regex SMOD_REGEX = new Regex(@"\[(DEBUG|INFO|WARN|ERROR)\] (\[.*?\]) (.*)", RegexOptions.Compiled);
 		public static readonly ConsoleColor DEFAULT_FOREGROUND = ConsoleColor.Cyan;
@@ -18,7 +19,7 @@ namespace MultiAdmin
 		{
 			try
 			{
-				return (ConsoleColor)Enum.Parse(typeof(ConsoleColor), color);
+				return (ConsoleColor) Enum.Parse(typeof(ConsoleColor), color);
 			}
 			catch
 			{
@@ -31,28 +32,19 @@ namespace MultiAdmin
 			while (!server.IsStopping())
 			{
 				string dedicatedDir = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + server.GetSessionId();
-				string[] activeDir = new string[] {};
+				string[] activeDir = { };
 
 				try
 				{
-					if (Directory.Exists(dedicatedDir))
-					{
-						activeDir = Directory.GetFiles(dedicatedDir, "sl*.mapi", SearchOption.TopDirectoryOnly).OrderBy(f => f).ToArray<string>();
-					}
+					if (Directory.Exists(dedicatedDir)) activeDir = Directory.GetFiles(dedicatedDir, "sl*.mapi", SearchOption.TopDirectoryOnly).OrderBy(f => f).ToArray();
 				}
 				catch
 				{
-					if (!server.IsStopping())
-					{
-						server.Write("Message printer warning: 'SCPSL_Data/Dedicated' directory not found.", ConsoleColor.Yellow);
-					}
+					if (!server.IsStopping()) server.Write("Message printer warning: 'SCPSL_Data/Dedicated' directory not found.", ConsoleColor.Yellow);
 				}
 
-				if (activeDir.Length == 0)
-				{
-					continue;
-				}
-				
+				if (activeDir.Length == 0) continue;
+
 				foreach (string file in activeDir)
 				{
 					string stream = string.Empty;
@@ -88,6 +80,7 @@ namespace MultiAdmin
 								server.Write("skipping");
 							}
 						}
+
 						Thread.Sleep(server.printSpeed);
 					}
 
@@ -119,7 +112,6 @@ namespace MultiAdmin
 									break;
 							}
 						}
-
 					}
 
 					// Smod3 Color tags
@@ -140,29 +132,16 @@ namespace MultiAdmin
 							{
 								string colorTag = part.Substring(3, part.IndexOf(";") - 3);
 
-								if (part.Substring(0, 3).Equals("fg="))
-								{
-									fg = MapConsoleColor(colorTag, DEFAULT_FOREGROUND);
-								}
+								if (part.Substring(0, 3).Equals("fg=")) fg = MapConsoleColor(colorTag, DEFAULT_FOREGROUND);
 
-								if (line.Substring(0, 3).Equals("bg="))
-								{
-									bg = MapConsoleColor(colorTag, DEFAULT_BACKGROUND);
-								}
+								if (line.Substring(0, 3).Equals("bg=")) bg = MapConsoleColor(colorTag, DEFAULT_BACKGROUND);
 
-								if (part.Length == line.IndexOf(";"))
-								{
-									part = string.Empty;
-								}
-								else
-								{
-									part = part.Substring(line.IndexOf(";") + 1);
-								}
-
+								part = part.Length == line.IndexOf(";") ? string.Empty : part.Substring(line.IndexOf(";") + 1);
 							}
 
 							server.WritePart(part, bg, fg, false, false);
 						}
+
 						// end
 						server.WritePart(string.Empty, DEFAULT_BACKGROUND, ConsoleColor.Cyan, false, true);
 						display = false;
@@ -170,7 +149,7 @@ namespace MultiAdmin
 
 					// Smod2 loggers pretty printing
 
-					var match = SMOD_REGEX.Match(stream);
+					Match match = SMOD_REGEX.Match(stream);
 					if (match.Success)
 					{
 						if (match.Groups.Count >= 2)
@@ -197,6 +176,7 @@ namespace MultiAdmin
 									color = ConsoleColor.Cyan;
 									break;
 							}
+
 							server.WritePart(string.Empty, DEFAULT_BACKGROUND, ConsoleColor.Cyan, true, false);
 							server.WritePart("[" + match.Groups[1].Value + "] ", DEFAULT_BACKGROUND, levelColor, false, false);
 							server.WritePart(match.Groups[2].Value + " ", DEFAULT_BACKGROUND, tagColor, false, false);
@@ -204,7 +184,7 @@ namespace MultiAdmin
 							// The regex.Match was trimming out the new lines and that is why no new lines were created.
 							// To be sure this will not happen again:
 
-							streamSplit = stream.Split(new char[] { ']' }, 3);
+							streamSplit = stream.Split(new[] {']'}, 3);
 							server.WritePart(streamSplit[2], DEFAULT_BACKGROUND, msgColor, false, true);
 
 							// This way, it outputs the whole message.
@@ -212,19 +192,14 @@ namespace MultiAdmin
 							// That was just an example
 							display = false;
 						}
-
 					}
 
 
 					if (stream.Contains("Mod Log:"))
 					{
 						foreach (Feature f in server.Features)
-						{
-							if (f is IEventAdminAction)
-							{
-								((IEventAdminAction)f).OnAdminAction(stream.Replace("Mod log:", string.Empty));
-							}
-						}
+							if (f is IEventAdminAction action)
+								action.OnAdminAction(stream.Replace("Mod log:", string.Empty));
 					}
 
 					if (stream.Contains("ServerMod - Version"))
@@ -241,12 +216,8 @@ namespace MultiAdmin
 						if (stream.Contains("Round restarting"))
 						{
 							foreach (Feature f in server.Features)
-							{
-								if (f is IEventRoundEnd)
-								{
-									((IEventRoundEnd)f).OnRoundEnd();
-								}
-							}
+								if (f is IEventRoundEnd end)
+									end.OnRoundEnd();
 						}
 
 						if (stream.Contains("Waiting for players"))
@@ -255,12 +226,8 @@ namespace MultiAdmin
 							{
 								server.InitialRoundStarted = true;
 								foreach (Feature f in server.Features)
-								{
-									if (f is IEventRoundStart)
-									{
-										((IEventRoundStart)f).OnRoundStart();
-									}
-								}
+									if (f is IEventRoundStart start)
+										start.OnRoundStart();
 							}
 
 							if (server.ServerModCheck(1, 5, 0) && server.fixBuggedPlayers)
@@ -278,22 +245,14 @@ namespace MultiAdmin
 							{
 								server.InitialRoundStarted = true;
 								foreach (Feature f in server.Features)
-								{
-									if (f is IEventRoundStart)
-									{
-										((IEventRoundStart)f).OnRoundStart();
-									}
-								}
+									if (f is IEventRoundStart start)
+										start.OnRoundStart();
 							}
 							else
 							{
 								foreach (Feature f in server.Features)
-								{
-									if (f is IEventRoundEnd)
-									{
-										((IEventRoundEnd)f).OnRoundEnd();
-									}
-								}
+									if (f is IEventRoundEnd end)
+										end.OnRoundEnd();
 							}
 
 							if (server.ServerModCheck(1, 5, 0) && server.fixBuggedPlayers)
@@ -305,40 +264,26 @@ namespace MultiAdmin
 					}
 
 
-
 					if (stream.Contains("New round has been started"))
 					{
-
 						foreach (Feature f in server.Features)
-						{
-							if (f is IEventRoundStart)
-							{
-								((IEventRoundStart)f).OnRoundStart();
-							}
-						}
+							if (f is IEventRoundStart start)
+								start.OnRoundStart();
 					}
 
 					if (stream.Contains("Level loaded. Creating match..."))
 					{
 						foreach (Feature f in server.Features)
-						{
-							if (f is IEventServerStart)
-							{
-								((IEventServerStart)f).OnServerStart();
-							}
-						}
+							if (f is IEventServerStart start)
+								start.OnServerStart();
 					}
 
 
 					if (stream.Contains("Server full"))
 					{
 						foreach (Feature f in server.Features)
-						{
-							if (f is IEventServerFull)
-							{
-								((IEventServerFull)f).OnServerFull();
-							}
-						}
+							if (f is IEventServerFull full)
+								full.OnServerFull();
 					}
 
 
@@ -347,13 +292,11 @@ namespace MultiAdmin
 						display = false;
 						server.Log("Player connect event");
 						foreach (Feature f in server.Features)
-						{
-							if (f is IEventPlayerConnect)
+							if (f is IEventPlayerConnect connect)
 							{
 								string name = stream.Substring(stream.IndexOf(":"));
-								((IEventPlayerConnect)f).OnPlayerConnect(name);
+								connect.OnPlayerConnect(name);
 							}
-						}
 					}
 
 					if (stream.Contains("Player disconnect"))
@@ -361,29 +304,22 @@ namespace MultiAdmin
 						display = false;
 						server.Log("Player disconnect event");
 						foreach (Feature f in server.Features)
-						{
-							if (f is IEventPlayerDisconnect)
+							if (f is IEventPlayerDisconnect disconnect)
 							{
 								string name = stream.Substring(stream.IndexOf(":"));
-								((IEventPlayerDisconnect)f).OnPlayerDisconnect(name);
+								disconnect.OnPlayerDisconnect(name);
 							}
-						}
 					}
 
 					if (stream.Contains("Player has connected before load is complete"))
-					{
 						if (server.ServerModCheck(1, 5, 0))
-						{
 							server.fixBuggedPlayers = true;
-						}
-					}
 
 					if (display) server.Write(stream.Trim(), color);
 				}
 
 				Thread.Sleep(server.runOptimized ? 5 : 10);
 			}
-
 		}
 	}
 }

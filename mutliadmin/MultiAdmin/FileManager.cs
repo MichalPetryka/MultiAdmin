@@ -5,13 +5,7 @@ using System.Text;
 
 public class FileManager
 {
-	public static string AppFolder
-	{
-		get
-		{
-			return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "SCP Secret Laboratory" + Path.DirectorySeparatorChar;
-		}
-	}
+	public static string AppFolder => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "SCP Secret Laboratory" + Path.DirectorySeparatorChar;
 
 	public static string[] ReadAllLines(string path)
 	{
@@ -30,7 +24,7 @@ public class FileManager
 
 	public static void AppendFile(string data, string path, bool newLine = true)
 	{
-		var lines = ReadAllLines(path);
+		string[] lines = ReadAllLines(path);
 		if (!newLine || lines.Length == 0 || lines[lines.Length - 1].EndsWith(Environment.NewLine) || lines[lines.Length - 1].EndsWith("\n")) File.AppendAllText(path, data, Encoding.UTF8);
 		else File.AppendAllText(path, Environment.NewLine + data, Encoding.UTF8);
 	}
@@ -47,14 +41,14 @@ public class FileManager
 
 	public static void ReplaceLine(int line, string text, string path)
 	{
-		var data = ReadAllLines(path);
+		string[] data = ReadAllLines(path);
 		data[line] = text;
 		WriteToFile(data, path);
 	}
 
 	public static void RemoveEmptyLines(string path)
 	{
-		var data = ReadAllLines(path).Where(s => !string.IsNullOrEmpty(s.Replace(Environment.NewLine, "").Replace("\n", "").Replace(" ", ""))).ToArray();
+		string[] data = ReadAllLines(path).Where(s => !string.IsNullOrEmpty(s.Replace(Environment.NewLine, "").Replace("\n", "").Replace(" ", ""))).ToArray();
 		WriteToFile(data, path);
 	}
 }

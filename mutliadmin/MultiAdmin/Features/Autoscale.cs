@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MultiAdmin.MultiAdmin.Features;
+﻿using MultiAdmin.MultiAdmin.Features;
 
 namespace MultiAdmin.MultiAdmin.Commands
 {
 	[Feature]
-	class Autoscale : Feature, IEventServerFull
+	internal class Autoscale : Feature, IEventServerFull
 	{
 		private string config;
 
 		public Autoscale(Server server) : base(server)
 		{
+		}
+
+		public void OnServerFull()
+		{
+			if (!config.Equals("disabled"))
+				if (!Server.IsConfigRunning(config))
+					Server.NewInstance(config);
 		}
 
 		public override void Init()
@@ -33,17 +35,6 @@ namespace MultiAdmin.MultiAdmin.Commands
 		public override string GetFeatureName()
 		{
 			return "Autoscale";
-		}
-
-		public void OnServerFull()
-		{
-			if (!config.Equals("disabled"))
-			{
-				if (!Server.IsConfigRunning(config))
-				{
-					Server.NewInstance(config);
-				}
-			}
 		}
 	}
 }

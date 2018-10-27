@@ -8,15 +8,15 @@ namespace MultiAdmin
 {
 	public class OldConfig
 	{
+		private readonly Regex rgx = new Regex("^[^;\\/:\\n\\r\\s=]+\\s*=[^;\\n\\r]+;", RegexOptions.Multiline | RegexOptions.Compiled);
+		private readonly string configFile;
 		public Dictionary<string, string> values;
-		private string configFile;
 
 		public OldConfig(string configFile)
 		{
 			this.configFile = configFile;
 			Reload();
 		}
-		private readonly Regex rgx = new Regex("^[^;\\/:\\n\\r\\s=]+\\s*=[^;\\n\\r]+;", RegexOptions.Multiline | RegexOptions.Compiled);
 
 		public string[] GetRaw()
 		{
@@ -26,10 +26,7 @@ namespace MultiAdmin
 				List<string> content = new List<string>();
 
 				string line;
-				while ((line = streamReader.ReadLine()) != null)
-				{
-					content.Add(line);
-				}
+				while ((line = streamReader.ReadLine()) != null) content.Add(line);
 
 				streamReader.Close();
 
@@ -53,7 +50,7 @@ namespace MultiAdmin
 
 				foreach (Match match in matches)
 				{
-					string[] parts = match.Value.Split(new char[] { '=' }, 2);
+					string[] parts = match.Value.Split(new[] {'='}, 2);
 
 					string key = parts[0].Trim().ToLower();
 					string value = parts[1].Trim();
@@ -63,49 +60,32 @@ namespace MultiAdmin
 						value = value.Substring(0, value.Length - 1); // Removes ";" from the end
 
 						if (!values.ContainsKey(key))
-						{
 							values.Add(key, value);
-						}
 						else
-						{
 							Program.Write("Duplicate value found in config file:" + key + " using the first");
-						}
 					}
 					else
-					{
 						Program.Write("Error: Config value is missing!");
-					}
 				}
 			}
-
 		}
 
 
 		public string GetValue(string key, string def = null)
 		{
-			string val = null;
-			if (!values.TryGetValue(key.ToLower(), out val))
-			{
-				val = def;
-			}
+			if (!values.TryGetValue(key.ToLower(), out string val)) val = def;
 
 			return val;
 		}
 
 		public int GetIntValue(string key, int def)
 		{
-			int result;
-			bool successful = int.TryParse(GetValue(key, def.ToString()), out result);
+			bool successful = int.TryParse(GetValue(key, def.ToString()), out int result);
 
 			if (successful)
-			{
 				return result;
-			}
-			else
-			{
-				Console.WriteLine("WARNING: failed to parse integer value for config setting:" + key + " using default value.");
-				return def;
-			}
+			Console.WriteLine("WARNING: failed to parse integer value for config setting:" + key + " using default value.");
+			return def;
 		}
 
 		public bool GetBoolean(string key, bool def)
@@ -113,44 +93,40 @@ namespace MultiAdmin
 			string configValue = GetValue(key, def.ToString());
 
 			// Why did I make it so you can use these words? Because I can.
-			string[] trueWords = new string[]
+			string[] trueWords =
 			{
-			"true",
-			"t",
-			"y",
-			"yes",
-			"sure",
-			"yeah",
-			"yea",
-			"affirmative",
-			"aye",
-			"1"
+				"true",
+				"t",
+				"y",
+				"yes",
+				"sure",
+				"yeah",
+				"yea",
+				"affirmative",
+				"aye",
+				"1"
 			};
 
-			string[] falseWords = new string[]
+			string[] falseWords =
 			{
-			"false",
-			"f",
-			"n",
-			"no",
-			"nope",
-			"nah",
-			"negative",
-			"nay",
-			"0"
+				"false",
+				"f",
+				"n",
+				"no",
+				"nope",
+				"nah",
+				"negative",
+				"nay",
+				"0"
 			};
 
 			foreach (string word in trueWords)
-			{
 				if (configValue.Equals(word.ToLower()))
 					return true;
-			}
 
 			foreach (string word in falseWords)
-			{
 				if (configValue.Equals(word.ToLower()))
 					return false;
-			}
 
 			return def;
 		}

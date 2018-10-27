@@ -1,21 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MultiAdmin.MultiAdmin.Features;
 
 namespace MultiAdmin.MultiAdmin.Commands
 {
 	[Feature]
-	class Titlebar : Feature, IEventPlayerConnect, IEventPlayerDisconnect, IEventServerStart
+	internal class Titlebar : Feature, IEventPlayerConnect, IEventPlayerDisconnect, IEventServerStart
 	{
-		private int playerCount;
 		private int maxPlayers;
+		private int playerCount;
 
 		public Titlebar(Server server) : base(server)
 		{
+		}
+
+		public void OnPlayerConnect(string name)
+		{
+			playerCount++;
+			UpdateTitlebar();
+		}
+
+		public void OnPlayerDisconnect(string name)
+		{
+			playerCount--;
+			UpdateTitlebar();
+		}
+
+		public void OnServerStart()
+		{
+			UpdateTitlebar();
 		}
 
 
@@ -40,35 +53,15 @@ namespace MultiAdmin.MultiAdmin.Commands
 		{
 		}
 
-		public void OnPlayerConnect(string name)
-		{
-			playerCount++;
-			UpdateTitlebar();
-		}
-
-		public void OnPlayerDisconnect(string name)
-		{
-			playerCount--;
-			UpdateTitlebar();
-		}
-
-		public void OnServerStart()
-		{
-			UpdateTitlebar();
-		}
-
 		public void UpdateTitlebar()
 		{
 			if (Server.SkipProcessHandle() || Process.GetCurrentProcess().MainWindowHandle != IntPtr.Zero)
 			{
-				var smod = string.Empty;
-				if (Server.HasServerMod)
-				{
-					smod = "SMod " + Server.ServerModVersion;
-				}
-				var displayPlayerCount = playerCount;
+				string smod = string.Empty;
+				if (Server.HasServerMod) smod = "SMod " + Server.ServerModVersion;
+				int displayPlayerCount = playerCount;
 				if (playerCount == -1) displayPlayerCount = 0;
-				string proccessId = (Server.GetGameProccess() == null) ? string.Empty : Server.GetGameProccess().Id.ToString();
+				string proccessId = Server.GetGameProccess() == null ? string.Empty : Server.GetGameProccess().Id.ToString();
 				Console.Title = "MultiAdmin " + Server.MA_VERSION + " | Config: " + Server.ConfigKey + " | Session:" + Server.GetSessionId() + " PID: " + proccessId + " | " + displayPlayerCount + "/" + maxPlayers + " | " + smod;
 			}
 		}

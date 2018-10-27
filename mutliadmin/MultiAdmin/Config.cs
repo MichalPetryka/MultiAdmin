@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+
 //using YamlDotNet.RepresentationModel;
 
 namespace MultiAdmin
@@ -16,7 +16,7 @@ namespace MultiAdmin
 	public class Config
 	{
 		public YamlConfig config;
-		private string configFile;
+		private readonly string configFile;
 
 		public Config(string configFile)
 		{
@@ -26,10 +26,7 @@ namespace MultiAdmin
 
 		public void Reload()
 		{
-			if (!Directory.Exists(FileManager.AppFolder))
-			{
-				Directory.CreateDirectory(FileManager.AppFolder);
-			}
+			if (!Directory.Exists(FileManager.AppFolder)) Directory.CreateDirectory(FileManager.AppFolder);
 
 			config = new YamlConfig(configFile);
 		}

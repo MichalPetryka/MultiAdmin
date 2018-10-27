@@ -1,35 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MultiAdmin.MultiAdmin.Features;
 
 namespace MultiAdmin.MultiAdmin.Commands
 {
 	[Feature]
-	class MemoryChecker : Feature, IEventTick
+	internal class MemoryChecker : Feature, IEventTick
 	{
 		private int lowMb;
 		private int maxMb;
 		private int tickCount;
+
 		public MemoryChecker(Server server) : base(server)
 		{
-		}
-
-		public override void Init()
-		{
-			tickCount = 0;
-		}
-
-		public override string GetFeatureDescription()
-		{
-			return "Restarts the server if the working memory becomes too low";
-		}
-
-		public override string GetFeatureName()
-		{
-			return "Restart On Low Memory";
 		}
 
 		public void OnTick()
@@ -46,9 +28,7 @@ namespace MultiAdmin.MultiAdmin.Commands
 					tickCount++;
 				}
 				else
-				{
 					tickCount = 0;
-				}
 
 				if (tickCount == 10)
 				{
@@ -56,6 +36,21 @@ namespace MultiAdmin.MultiAdmin.Commands
 					Server.SoftRestartServer();
 				}
 			}
+		}
+
+		public override void Init()
+		{
+			tickCount = 0;
+		}
+
+		public override string GetFeatureDescription()
+		{
+			return "Restarts the server if the working memory becomes too low";
+		}
+
+		public override string GetFeatureName()
+		{
+			return "Restart On Low Memory";
 		}
 
 		public override void OnConfigReload()

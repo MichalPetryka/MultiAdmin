@@ -1,39 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MultiAdmin.MultiAdmin.Features;
 
 namespace MultiAdmin.MultiAdmin.Commands
 {
 	[Feature]
-	class MemoryCheckerSoft : Feature, IEventTick, IEventRoundEnd
+	internal class MemoryCheckerSoft : Feature, IEventTick, IEventRoundEnd
 	{
 		private int lowMb;
 		private int maxMb;
-		private int tickCount;
 		private bool restart;
+		private int tickCount;
 		private bool warn;
+
 		public MemoryCheckerSoft(Server server) : base(server)
 		{
 		}
 
-		public override void Init()
+		public void OnRoundEnd()
 		{
-			tickCount = 0;
-			restart = false;
-			warn = false;
-		}
-
-		public override string GetFeatureDescription()
-		{
-			return "Restarts the server if the working memory becomes too low at the end of the round";
-		}
-
-		public override string GetFeatureName()
-		{
-			return "Restart On Low Memory at the end of the round";
+			if (restart) Server.SoftRestartServer();
 		}
 
 		public void OnTick()
@@ -64,16 +49,28 @@ namespace MultiAdmin.MultiAdmin.Commands
 			}
 		}
 
+		public override void Init()
+		{
+			tickCount = 0;
+			restart = false;
+			warn = false;
+		}
+
+		public override string GetFeatureDescription()
+		{
+			return "Restarts the server if the working memory becomes too low at the end of the round";
+		}
+
+		public override string GetFeatureName()
+		{
+			return "Restart On Low Memory at the end of the round";
+		}
+
 		public override void OnConfigReload()
 		{
 			lowMb = Server.ServerConfig.config.GetInt("restart_low_memory_roundend", 450);
 
 			maxMb = Server.ServerConfig.config.GetInt("max_memory", 2048); // 32 bit limited to 2GB
-		}
-
-		public void OnRoundEnd()
-		{
-			if (restart) base.Server.SoftRestartServer();
 		}
 	}
 }

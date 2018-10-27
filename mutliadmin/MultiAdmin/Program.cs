@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using MultiAdmin;
 using MultiAdmin.MultiAdmin;
+
 //using YamlDotNet.Serialization;
 
 namespace MutliAdmin
@@ -15,7 +16,7 @@ namespace MutliAdmin
 		private static string configChain;
 		private static Config multiadminConfig;
 		private static Server server;
-		private static bool multiMode = false;
+		private static bool multiMode;
 
 		public static void Write(string message, ConsoleColor color = ConsoleColor.DarkYellow)
 		{
@@ -31,15 +32,12 @@ namespace MutliAdmin
 
 		public static bool FindConfig()
 		{
-			var defaultLoc = FileManager.AppFolder + "config_gameplay.txt";
-			var path = Program.multiadminConfig.config.GetString("cfg_loc", defaultLoc);
-			var backup = path.Replace(".txt", "_backup.txt");
+			string defaultLoc = FileManager.AppFolder + "config_gameplay.txt";
+			string path = multiadminConfig.config.GetString("cfg_loc", defaultLoc);
+			string backup = path.Replace(".txt", "_backup.txt");
 
 			// Copy config template
-			if (!Directory.Exists(FileManager.AppFolder))
-			{
-				Directory.CreateDirectory(FileManager.AppFolder);
-			}
+			if (!Directory.Exists(FileManager.AppFolder)) Directory.CreateDirectory(FileManager.AppFolder);
 			if (!File.Exists(path))
 			{
 				try
@@ -57,11 +55,11 @@ namespace MutliAdmin
 			if (File.Exists(path))
 			{
 				configLocation = path;
-				Program.Write("Config file located at: " + path, ConsoleColor.DarkYellow);
+				Write("Config file located at: " + path, ConsoleColor.DarkYellow);
 
 				if (!File.Exists(backup))
 				{
-					Program.Write("Config file has not been backed up, creating backup copy under: " + backup, ConsoleColor.DarkYellow);
+					Write("Config file has not been backed up, creating backup copy under: " + backup, ConsoleColor.DarkYellow);
 					File.Copy(path, backup);
 				}
 			}
@@ -83,7 +81,7 @@ namespace MutliAdmin
 				hasServerToStart = true;
 				multiMode = true;
 				// This shouldnt be the server specific config, it should be the global one scp_config?
-				//multiadminConfig = new MultiAdmin.Config(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + configKey + Path.DirectorySeparatorChar + "config.txt");
+				//multiadminConfig = new MultiAdmin.Config(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + configKey + Path.DirectorySeparatorChar + "config_gameplay.txt");
 				Write("Starting this instance with config directory:" + configKey, ConsoleColor.DarkYellow);
 				// chain the rest
 				string[] newArgs = args.Skip(1).Take(args.Length - 1).ToArray();
@@ -93,8 +91,7 @@ namespace MutliAdmin
 			{
 				// The first check sees if the "servers" directory exists, and if it does, 
 				//  the second check will see if it is empty.
-				if (Directory.Exists(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers") &&
-					HasSubdirs(Directory.GetDirectories(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers")))
+				if (Directory.Exists(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers") && HasSubdirs(Directory.GetDirectories(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers")))
 				{
 					Write("Using multiple server mode", ConsoleColor.Green);
 					multiMode = true;
@@ -107,19 +104,19 @@ namespace MutliAdmin
 					hasServerToStart = true;
 					Write("Using default server mode", ConsoleColor.Green);
 					Write("Server directory not found or it is empty, if you want to use multiple server mode, please make a new directory in the following format:", ConsoleColor.Yellow);
-					Write(Directory.GetCurrentDirectory() + "\\servers\\<Server id>\\config.txt", ConsoleColor.Yellow);
+					Write(Directory.GetCurrentDirectory() + "\\servers\\<Server id>\\config_gameplay.txt", ConsoleColor.Yellow);
 				}
 			}
 
-			if (!hasServerToStart)
-			{
-				Write("All servers are set to manual start! you should have at least one config that auto starts", ConsoleColor.Red);
-			}
+			if (!hasServerToStart) Write("All servers are set to manual start! you should have at least one config that auto starts", ConsoleColor.Red);
 
 			return hasServerToStart;
 		}
 
-		public static bool HasSubdirs(string[] dirs) => dirs.Length > 0;
+		public static bool HasSubdirs(string[] dirs)
+		{
+			return dirs.Length > 0;
+		}
 
 
 		public static bool LoadserverFolders()
@@ -132,12 +129,10 @@ namespace MutliAdmin
 				string name = new DirectoryInfo(file).Name;
 				if (first)
 				{
-					var serverConfig = new MultiAdmin.Config(file + Path.DirectorySeparatorChar + "config.txt");
-					Program.Write(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config.txt");
+					Config serverConfig = new Config(file + Path.DirectorySeparatorChar + "config_gameplay.txt");
+					Write(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
 					if (serverConfig.config.GetBool("manual_start", false))
-					{
 						Write("Skipping auto start for: " + name, ConsoleColor.DarkYellow);
-					}
 					else
 					{
 						hasServerToStart = true;
@@ -145,21 +140,15 @@ namespace MutliAdmin
 						Write("Starting this instance with config directory: " + name, ConsoleColor.DarkYellow);
 						first = false;
 					}
-
 				}
 				else
 				{
-					var other_config = new Config(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config.txt");
-					Write(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config.txt");
+					Config other_config = new Config(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
+					Write(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
 					if (other_config.config.GetBool("manual_start", false))
-					{
 						Write("Skipping auto start for: " + name, ConsoleColor.DarkYellow);
-					}
 					else
-					{
 						configChain += "\"" + name + "\" ";
-					}
-
 				}
 			}
 
@@ -171,10 +160,10 @@ namespace MutliAdmin
 			string[] dirs = Directory.GetDirectories(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar);
 			foreach (string file in dirs)
 			{
-				var name = file + Path.DirectorySeparatorChar + "config.txt";
-				var backup = file + Path.DirectorySeparatorChar + "config.backup";
+				string name = file + Path.DirectorySeparatorChar + "config_gameplay.txt";
+				string backup = file + Path.DirectorySeparatorChar + "config.backup";
 				Write("Converting old config to YAML: " + file, ConsoleColor.Green);
-				OldConfig config = new OldConfig(file + Path.DirectorySeparatorChar + "config.txt");
+				OldConfig config = new OldConfig(file + Path.DirectorySeparatorChar + "config_gameplay.txt");
 				//var serializer = new SerializerBuilder().Build();
 				//var yaml = serializer.Serialize(config.values);
 				//Write(yaml, ConsoleColor.White);
@@ -182,7 +171,6 @@ namespace MutliAdmin
 				string yaml = string.Empty;
 
 				foreach (string line in config.GetRaw())
-				{
 					try
 					{
 						string commentText = "//"; // Dunno if everyone uses that comment style, whatever
@@ -194,17 +182,12 @@ namespace MutliAdmin
 							string followingContent = line.Substring(line.IndexOf(";") + 1, line.Length - (line.IndexOf(";") + 1)).Trim(); // " //comment" -> "//comment"
 
 							if (followingContent.StartsWith(commentText)) // "//comment" -> "comment"
-							{
 								followingContent = followingContent.Substring(commentText.Length).Trim();
-							}
 
 							string newLine = keyandEquals + ": " + value;
 
 							// Write any comments
-							if (!string.IsNullOrEmpty(followingContent))
-							{
-								yaml += (followingContent.StartsWith("#") ? string.Empty : "#") + followingContent + Environment.NewLine;
-							}
+							if (!string.IsNullOrEmpty(followingContent)) yaml += (followingContent.StartsWith("#") ? string.Empty : "#") + followingContent + Environment.NewLine;
 
 							yaml += newLine + Environment.NewLine;
 						}
@@ -213,11 +196,9 @@ namespace MutliAdmin
 							string newLine = line.Trim();
 
 							if (newLine.StartsWith(commentText)) // "//comment" -> "comment"
-							{
 								newLine = newLine.Substring(commentText.Length).Trim();
-							}
 
-							newLine = (string.IsNullOrEmpty(newLine) ? string.Empty : (newLine.StartsWith("#") ? string.Empty : "#") + newLine);
+							newLine = string.IsNullOrEmpty(newLine) ? string.Empty : (newLine.StartsWith("#") ? string.Empty : "#") + newLine;
 
 							yaml += newLine + Environment.NewLine;
 						}
@@ -228,7 +209,6 @@ namespace MutliAdmin
 						Write(e.Source);
 						Write(e.StackTrace);
 					}
-				}
 
 				File.Copy(name, backup);
 				File.WriteAllText(name, yaml);
@@ -244,7 +224,7 @@ namespace MutliAdmin
 			return Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers";
 		}
 
-		static void OnExit(object sender, EventArgs e)
+		private static void OnExit(object sender, EventArgs e)
 		{
 			Console.WriteLine("exit");
 			Debug.Write("exit");
@@ -253,13 +233,14 @@ namespace MutliAdmin
 
 		public static void Main(string[] args)
 		{
-			AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnExit);
+			AppDomain.CurrentDomain.ProcessExit += OnExit;
 			multiadminConfig = new Config("scp_multiadmin.cfg");
 			if (!FindConfig())
 			{
 				Console.ReadKey();
 				return;
 			}
+
 			if (args.Length == 1)
 			{
 				if (args[0].Equals("--convert-config"))
@@ -273,14 +254,9 @@ namespace MutliAdmin
 
 			configChain = string.Empty;
 			if (StartHandleConfigs(args))
-			{
 				server = new Server(GetServerDirectory(), configKey, multiadminConfig, configLocation, configChain, multiMode);
-			}
 			else
-			{
 				Console.ReadKey();
-			}
-
 		}
 	}
 }

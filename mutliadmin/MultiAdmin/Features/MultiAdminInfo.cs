@@ -1,17 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MultiAdmin.MultiAdmin.Features;
 
 namespace MultiAdmin.MultiAdmin.Commands
 {
 	[Feature]
-	class MultiAdminInfo : Feature, IEventServerPreStart, ICommand
+	internal class MultiAdminInfo : Feature, IEventServerPreStart, ICommand
 	{
 		public MultiAdminInfo(Server server) : base(server)
 		{
+		}
+
+		public void OnCall(string[] args)
+		{
+			PrintInfo();
+		}
+
+		public string GetCommand()
+		{
+			return "INFO";
+		}
+
+		public bool PassToGame()
+		{
+			return false;
+		}
+
+		public string GetCommandDescription()
+		{
+			return "Prints license and author information.";
+		}
+
+
+		public string GetUsage()
+		{
+			return string.Empty;
+		}
+
+
+		public void OnServerPreStart()
+		{
+			PrintInfo();
 		}
 
 		public override void Init()
@@ -39,38 +67,6 @@ namespace MultiAdmin.MultiAdmin.Commands
 		public override string GetFeatureName()
 		{
 			return "MutliAdminInfo";
-		}
-
-
-		public void OnServerPreStart()
-		{
-			PrintInfo();
-		}
-
-		public void OnCall(string[] args)
-		{
-			PrintInfo();
-		}
-
-		public string GetCommand()
-		{
-			return "INFO";
-		}
-
-		public bool PassToGame()
-		{
-			return false;
-		}
-
-		public string GetCommandDescription()
-		{
-			return "Prints license and author information.";
-		}
-
-
-		public string GetUsage()
-		{
-			return string.Empty;
 		}
 	}
 }

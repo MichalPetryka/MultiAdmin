@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MultiAdmin.MultiAdmin.Features
+﻿namespace MultiAdmin.MultiAdmin.Features
 {
 	[Feature]
-	class Restart : Feature, ICommand
+	internal class Restart : Feature, ICommand
 	{
 		public Restart(Server server) : base(server)
 		{
@@ -23,6 +17,21 @@ namespace MultiAdmin.MultiAdmin.Features
 			return "Restarts the game server (multiadmin will not restart, just the game)";
 		}
 
+		public string GetUsage()
+		{
+			return string.Empty;
+		}
+
+		public void OnCall(string[] args)
+		{
+			Server.SoftRestartServer();
+		}
+
+		public bool PassToGame()
+		{
+			return false;
+		}
+
 		public override string GetFeatureDescription()
 		{
 			return "Allows the game to be restarted without restarting multiadmin";
@@ -33,27 +42,12 @@ namespace MultiAdmin.MultiAdmin.Features
 			return "Restart command";
 		}
 
-		public string GetUsage()
-		{
-			return string.Empty;
-		}
-
 		public override void Init()
 		{
 		}
 
-		public void OnCall(string[] args)
-		{
-			this.Server.SoftRestartServer();
-		}
-
 		public override void OnConfigReload()
 		{
-		}
-
-		public bool PassToGame()
-		{
-			return false;
 		}
 	}
 }
