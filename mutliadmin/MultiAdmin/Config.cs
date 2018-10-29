@@ -15,8 +15,8 @@ namespace MultiAdmin
 
 	public class Config
 	{
-		public YamlConfig config;
 		private readonly string configFile;
+		public YamlConfig config;
 
 		public Config(string configFile)
 		{

@@ -8,8 +8,8 @@ namespace MultiAdmin
 {
 	public class OldConfig
 	{
-		private readonly Regex rgx = new Regex("^[^;\\/:\\n\\r\\s=]+\\s*=[^;\\n\\r]+;", RegexOptions.Multiline | RegexOptions.Compiled);
 		private readonly string configFile;
+		private readonly Regex rgx = new Regex("^[^;\\/:\\n\\r\\s=]+\\s*=[^;\\n\\r]+;", RegexOptions.Multiline | RegexOptions.Compiled);
 		public Dictionary<string, string> values;
 
 		public OldConfig(string configFile)

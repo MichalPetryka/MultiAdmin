@@ -356,12 +356,14 @@ namespace MultiAdmin.MultiAdmin
 			InitialRoundStarted = false;
 			try
 			{
+				string configdir = "servers" + Path.DirectorySeparatorChar + ConfigKey + Path.DirectorySeparatorChar;
 				PrepareFiles();
 				string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "SCPSL.*", SearchOption.TopDirectoryOnly);
-				SwapConfigs();
+				if (multiMode && !File.Exists(configdir + "config_gameplay.txt") && File.Exists(configdir + "config.txt")) File.Copy(configdir + "config.txt", configdir + "config_gameplay.txt");
+				//SwapConfigs();
 				Write("Executing: " + files[0], ConsoleColor.DarkGreen);
 				string args = nolog ? "-batchmode -nographics -key" + session_id + " -silent-crashes -id" + Process.GetCurrentProcess().Id + " -nolog" : "-batchmode -nographics -key" + session_id + " -silent-crashes -id" + Process.GetCurrentProcess().Id + " -logFile \"" + LogFolder + Utils.GetDate() + "_SCP_output_log.txt" + "\"";
-				//if (multiMode) args += " -configpath " + '"' + "servers" + Path.DirectorySeparatorChar + ConfigKey + '"' + " -sharenonconfigs";
+				if (multiMode) args += " -configpath " + '"' + "servers" + Path.DirectorySeparatorChar + ConfigKey + '"' + " -sharenonconfigs";
 				Write("Starting server with the following parameters");
 				Write(files[0] + " " + args);
 				ProcessStartInfo startInfo = new ProcessStartInfo(files[0]) {Arguments = args};
@@ -390,7 +392,7 @@ namespace MultiAdmin.MultiAdmin
 			return gameProcess;
 		}
 
-		public void SwapConfigs()
+		/*public void SwapConfigs()
 		{
 			if (multiMode)
 			{
@@ -417,7 +419,7 @@ namespace MultiAdmin.MultiAdmin
 					throw new FileNotFoundException("config file not found");
 				}
 			}
-		}
+		}*/
 
 		private void RemoveRunFile()
 		{

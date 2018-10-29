@@ -14,8 +14,10 @@ namespace MultiAdmin.MultiAdmin.Commands
 		public void OnServerFull()
 		{
 			if (!config.Equals("disabled"))
+			{
 				if (!Server.IsConfigRunning(config))
 					Server.NewInstance(config);
+			}
 		}
 
 		public override void Init()

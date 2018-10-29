@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using MultiAdmin.MultiAdmin;
+
 //why is a bullet here?
 
 namespace MultiAdmin
@@ -312,8 +313,10 @@ namespace MultiAdmin
 					}
 
 					if (stream.Contains("Player has connected before load is complete"))
+					{
 						if (server.ServerModCheck(1, 5, 0))
 							server.fixBuggedPlayers = true;
+					}
 
 					if (display) server.Write(stream.Trim(), color);
 				}
