@@ -6,8 +6,8 @@ namespace MultiAdmin.MultiAdmin.Features
 	[Feature]
 	internal class PluginAutoUpdate : Feature
 	{
-		private bool assemblyVerCheck;
-		private bool attributeVerCheck;
+		//private bool assemblyVerCheck;
+		//private bool attributeVerCheck;
 
 		public PluginAutoUpdate(Server server) : base(server)
 		{

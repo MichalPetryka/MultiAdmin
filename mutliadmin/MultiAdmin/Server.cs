@@ -361,6 +361,9 @@ namespace MultiAdmin.MultiAdmin
 				string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "SCPSL.*", SearchOption.TopDirectoryOnly);
 				if (multiMode && !File.Exists(configdir + "config_gameplay.txt") && File.Exists(configdir + "config.txt")) File.Copy(configdir + "config.txt", configdir + "config_gameplay.txt");
 				//SwapConfigs();
+				string dedicatedDir = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
+				if (Directory.Exists(dedicatedDir)) Directory.Delete(dedicatedDir, true);
+				Directory.CreateDirectory(dedicatedDir);
 				Write("Executing: " + files[0], ConsoleColor.DarkGreen);
 				string args = nolog ? "-batchmode -nographics -key" + session_id + " -silent-crashes -id" + Process.GetCurrentProcess().Id + " -nolog" : "-batchmode -nographics -key" + session_id + " -silent-crashes -id" + Process.GetCurrentProcess().Id + " -logFile \"" + LogFolder + Utils.GetDate() + "_SCP_output_log.txt" + "\"";
 				if (multiMode) args += " -configpath " + '"' + "servers" + Path.DirectorySeparatorChar + ConfigKey + '"' + " -sharenonconfigs";
