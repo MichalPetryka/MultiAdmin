@@ -312,11 +312,13 @@ namespace MultiAdmin
 			{
 				try
 				{
-					FileSystemWatcher watcher = new FileSystemWatcher {Path = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated", IncludeSubdirectories = true, NotifyFilter = NotifyFilters.FileName, Filter = "sl*.mapi"};
-					watcher.Created += (sender, e) =>
+					string dedicatedpath = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + server.GetSessionId();
+					while (!Directory.Exists(dedicatedpath))
 					{
-						if (e.FullPath.Contains(server.GetSessionId())) ReadFile(e, server);
-					};
+					}
+
+					FileSystemWatcher watcher = new FileSystemWatcher {Path = dedicatedpath, NotifyFilter = NotifyFilters.FileName, Filter = "sl*.mapi"};
+					watcher.Created += (sender, e) => ReadFile(e, server);
 					watcher.EnableRaisingEvents = true;
 				}
 				catch (Exception exception)
