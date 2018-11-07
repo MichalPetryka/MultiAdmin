@@ -62,9 +62,8 @@ public class YamlConfig
 	{
 		bool read = false;
 		List<string> list = new List<string>();
-		foreach (string line in RawData)
+		foreach (string line in RawData.TakeWhile(line => !line.StartsWith(key) || !line.EndsWith("[]")))
 		{
-			if (line.StartsWith(key) && line.EndsWith("[]")) break;
 			if (line.StartsWith(key + ":"))
 			{
 				read = true;

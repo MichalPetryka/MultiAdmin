@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using MutliAdmin;
 
@@ -120,13 +121,9 @@ namespace MultiAdmin
 				"0"
 			};
 
-			foreach (string word in trueWords)
-				if (configValue.Equals(word.ToLower()))
-					return true;
+			if (trueWords.Any(word => configValue.Equals(word.ToLower()))) return true;
 
-			foreach (string word in falseWords)
-				if (configValue.Equals(word.ToLower()))
-					return false;
+			if (falseWords.Any(word => configValue.Equals(word.ToLower()))) return false;
 
 			return def;
 		}
