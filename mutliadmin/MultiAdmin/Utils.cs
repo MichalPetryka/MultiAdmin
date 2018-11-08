@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace MultiAdmin.MultiAdmin
 {
@@ -15,11 +14,6 @@ namespace MultiAdmin.MultiAdmin
 		{
 			TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
 			return (long) t.TotalSeconds;
-		}
-
-		public static string GetParentDir()
-		{
-			return Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
 		}
 	}
 }

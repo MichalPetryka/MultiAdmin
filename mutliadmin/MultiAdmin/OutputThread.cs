@@ -28,12 +28,16 @@ namespace MultiAdmin
 			}
 		}
 
-
 		private static void ReadFile(FileSystemEventArgs e, Server server)
+		{
+			ReadFilePath(e.FullPath, server);
+		}
+
+		private static void ReadFilePath(string e, Server server)
 		{
 			Task t = Task.Factory.StartNew(() =>
 			{
-				string file = e.FullPath;
+				string file = e;
 				string stream = string.Empty;
 				string command = "open";
 				int attempts = 0;
@@ -318,13 +322,15 @@ namespace MultiAdmin
 			{
 				try
 				{
-					string dedicatedpath = Utils.GetParentDir() + Path.DirectorySeparatorChar + "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + server.GetSessionId();
-					while (!Directory.Exists(dedicatedpath))
-					{
-					}
+					string dedicatedpath = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + server.GetSessionId();
+					while (!Directory.Exists(dedicatedpath)) Thread.Sleep(100);
 
 					FileSystemWatcher watcher = new FileSystemWatcher {Path = dedicatedpath, NotifyFilter = NotifyFilters.FileName, Filter = "sl*.mapi"};
 					watcher.Created += (sender, e) => ReadFile(e, server);
+					foreach (string file in Directory.GetFiles(dedicatedpath))
+					{
+						ReadFilePath(file, server);
+					}
 					watcher.EnableRaisingEvents = true;
 				}
 				catch (Exception exception)

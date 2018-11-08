@@ -90,8 +90,7 @@ namespace MultiAdmin.MultiAdmin
 		{
 			get
 			{
-				string loc = multiMode ? Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + ConfigKey + Path.DirectorySeparatorChar + "logs" + Path.DirectorySeparatorChar : Utils.GetParentDir() + Path.DirectorySeparatorChar + "logs" + Path.DirectorySeparatorChar;
-
+				string loc = multiMode ? "servers" + Path.DirectorySeparatorChar + ConfigKey + Path.DirectorySeparatorChar + "logs" + Path.DirectorySeparatorChar : "logs" + Path.DirectorySeparatorChar;
 				if (!Directory.Exists(loc)) Directory.CreateDirectory(loc);
 
 				return loc;
@@ -328,7 +327,6 @@ namespace MultiAdmin.MultiAdmin
 			string file = File.Exists("MultiAdmin.exe") ? "MultiAdmin.exe" : "MultiAdmin";
 			ProcessStartInfo psi = new ProcessStartInfo(file, ConfigKey)
 			{
-				WorkingDirectory = Utils.GetParentDir(),
 				UseShellExecute = true
 			};
 			Process.Start(psi);
@@ -358,20 +356,20 @@ namespace MultiAdmin.MultiAdmin
 			InitialRoundStarted = false;
 			try
 			{
-				string configdir = Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + ConfigKey + Path.DirectorySeparatorChar;
+				string configdir = "servers" + Path.DirectorySeparatorChar + ConfigKey + Path.DirectorySeparatorChar;
 				PrepareFiles();
-				string[] files = Directory.GetFiles(Utils.GetParentDir(), "SCPSL.*", SearchOption.TopDirectoryOnly);
+				string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "SCPSL.*", SearchOption.TopDirectoryOnly);
 				if (multiMode && !File.Exists(configdir + "config_gameplay.txt") && File.Exists(configdir + "config.txt")) File.Copy(configdir + "config.txt", configdir + "config_gameplay.txt");
 				if (multiMode && !File.Exists(configdir + "config_remoteadmin.txt") && File.Exists(FileManager.AppFolder + "config_remoteadmin.txt")) File.Copy(FileManager.AppFolder + "config_remoteadmin.txt", configdir + "config_remoteadmin.txt");
 				//SwapConfigs();
-				string dedicatedDir = Utils.GetParentDir() + Path.DirectorySeparatorChar + "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
+				string dedicatedDir = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
 				if (Directory.Exists(dedicatedDir)) Directory.Delete(dedicatedDir, true);
 				Write("Executing: " + files[0], ConsoleColor.DarkGreen);
 				string args = nolog ? "-batchmode -nographics -key" + session_id + " -silent-crashes -id" + Process.GetCurrentProcess().Id + " -nolog" : "-batchmode -nographics -key" + session_id + " -silent-crashes -id" + Process.GetCurrentProcess().Id + " -logFile \"" + LogFolder + Utils.GetDate() + "_SCP_output_log.txt" + "\"";
-				if (multiMode) args += " -configpath " + '"' + Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + ConfigKey + '"' + " -sharenonconfigs";
+				if (multiMode) args += " -configpath " + '"' + "servers" + Path.DirectorySeparatorChar + ConfigKey + '"' + " -sharenonconfigs";
 				Write("Starting server with the following parameters");
 				Write(files[0] + " " + args);
-				ProcessStartInfo startInfo = new ProcessStartInfo(files[0]) {Arguments = args, WorkingDirectory = Utils.GetParentDir()};
+				ProcessStartInfo startInfo = new ProcessStartInfo(files[0]) {Arguments = args};
 				gameProcess = Process.Start(startInfo);
 				CreateRunFile();
 				started = true;
@@ -438,7 +436,7 @@ namespace MultiAdmin.MultiAdmin
 
 		private void CleanSession()
 		{
-			string path = Utils.GetParentDir() + Path.DirectorySeparatorChar + "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
+			string path = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
 			if (Directory.Exists(path))
 			{
 				foreach (string file in Directory.GetFiles(path))
@@ -449,7 +447,7 @@ namespace MultiAdmin.MultiAdmin
 		private void DeleteSession()
 		{
 			CleanSession();
-			string path = Utils.GetParentDir() + Path.DirectorySeparatorChar + "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
+			string path = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
 			if (Directory.Exists(path)) Directory.Delete(path);
 		}
 
@@ -469,7 +467,6 @@ namespace MultiAdmin.MultiAdmin
 			string file = File.Exists("MultiAdmin.exe") ? "MultiAdmin.exe" : "MultiAdmin";
 			ProcessStartInfo psi = new ProcessStartInfo(file, configChain)
 			{
-				WorkingDirectory = Utils.GetParentDir(),
 				UseShellExecute = true
 			};
 			Process.Start(psi);
@@ -477,7 +474,7 @@ namespace MultiAdmin.MultiAdmin
 
 		public void SendMessage(string message)
 		{
-			string sessionDirectory = Utils.GetParentDir() + Path.DirectorySeparatorChar + "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
+			string sessionDirectory = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
 			if (!Directory.Exists(sessionDirectory))
 			{
 				Write("Send Message error: sending " + message + " failed. " + sessionDirectory + " does not exist!", ConsoleColor.Yellow);

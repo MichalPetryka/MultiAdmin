@@ -43,7 +43,7 @@ namespace MutliAdmin
 				try
 				{
 					Write("Default config file not in expected location (" + path + "), copying \"MiscData/gameconfig_template.txt\"...");
-					File.Copy(Utils.GetParentDir() + Path.DirectorySeparatorChar + "MiscData/gameconfig_template.txt", path);
+					File.Copy("MiscData/gameconfig_template.txt", path);
 					Write("Copied default config!");
 				}
 				catch
@@ -81,7 +81,7 @@ namespace MutliAdmin
 				hasServerToStart = true;
 				multiMode = true;
 				// This shouldnt be the server specific config, it should be the global one scp_config?
-				//multiadminConfig = new MultiAdmin.Config(Utils.GetParentDir()  + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + configKey + Path.DirectorySeparatorChar + "config_gameplay.txt");
+				//multiadminConfig = new MultiAdmin.Config(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + configKey + Path.DirectorySeparatorChar + "config_gameplay.txt");
 				Write("Starting this instance with config directory:" + configKey, ConsoleColor.DarkYellow);
 				// chain the rest
 				string[] newArgs = args.Skip(1).Take(args.Length - 1).ToArray();
@@ -91,7 +91,7 @@ namespace MutliAdmin
 			{
 				// The first check sees if the "servers" directory exists, and if it does, 
 				//  the second check will see if it is empty.
-				if (Directory.Exists(Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers") && HasSubdirs(Directory.GetDirectories(Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers")))
+				if (Directory.Exists(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers") && HasSubdirs(Directory.GetDirectories(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers")))
 				{
 					Write("Using multiple server mode", ConsoleColor.Green);
 					multiMode = true;
@@ -104,7 +104,7 @@ namespace MutliAdmin
 					hasServerToStart = true;
 					Write("Using default server mode", ConsoleColor.Green);
 					Write("Server directory not found or it is empty, if you want to use multiple server mode, please make a new directory in the following format:", ConsoleColor.Yellow);
-					Write(Utils.GetParentDir() + "\\servers\\<Server id>\\config_gameplay.txt", ConsoleColor.Yellow);
+					Write(Directory.GetCurrentDirectory() + "\\servers\\<Server id>\\config_gameplay.txt", ConsoleColor.Yellow);
 				}
 			}
 
@@ -123,14 +123,14 @@ namespace MutliAdmin
 		{
 			bool hasServerToStart = false;
 			bool first = true;
-			string[] dirs = Directory.GetDirectories(Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar);
+			string[] dirs = Directory.GetDirectories(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar);
 			foreach (string file in dirs)
 			{
 				string name = new DirectoryInfo(file).Name;
 				if (first)
 				{
 					Config serverConfig = new Config(file + Path.DirectorySeparatorChar + "config_gameplay.txt");
-					Write(Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
+					Write(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
 					if (serverConfig.config.GetBool("manual_start", false))
 						Write("Skipping auto start for: " + name, ConsoleColor.DarkYellow);
 					else
@@ -143,8 +143,8 @@ namespace MutliAdmin
 				}
 				else
 				{
-					Config other_config = new Config(Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
-					Write(Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
+					Config other_config = new Config(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
+					Write(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar + name + Path.DirectorySeparatorChar + "config_gameplay.txt");
 					if (other_config.config.GetBool("manual_start", false))
 						Write("Skipping auto start for: " + name, ConsoleColor.DarkYellow);
 					else
@@ -157,7 +157,7 @@ namespace MutliAdmin
 
 		public static void ConvertConfigs()
 		{
-			string[] dirs = Directory.GetDirectories(Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar);
+			string[] dirs = Directory.GetDirectories(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers" + Path.DirectorySeparatorChar);
 			foreach (string file in dirs)
 			{
 				string name = file + Path.DirectorySeparatorChar + "config_gameplay.txt";
@@ -221,7 +221,7 @@ namespace MutliAdmin
 
 		public static string GetServerDirectory()
 		{
-			return Utils.GetParentDir() + Path.DirectorySeparatorChar + "servers";
+			return Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "servers";
 		}
 
 		private static void OnExit(object sender, EventArgs e)

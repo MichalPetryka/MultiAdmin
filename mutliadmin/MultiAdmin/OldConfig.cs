@@ -121,11 +121,7 @@ namespace MultiAdmin
 				"0"
 			};
 
-			if (trueWords.Any(word => configValue.Equals(word.ToLower()))) return true;
-
-			if (falseWords.Any(word => configValue.Equals(word.ToLower()))) return false;
-
-			return def;
+			return trueWords.Any(word => configValue.Equals(word.ToLower())) || !falseWords.Any(word => configValue.Equals(word.ToLower())) && def;
 		}
 	}
 }
