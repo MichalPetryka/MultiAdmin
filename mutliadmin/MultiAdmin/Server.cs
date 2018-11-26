@@ -447,8 +447,8 @@ namespace MultiAdmin.MultiAdmin
 		private void DeleteSession()
 		{
 			CleanSession();
-			string path = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
-			if (Directory.Exists(path)) Directory.Delete(path);
+			//string path = "SCPSL_Data" + Path.DirectorySeparatorChar + "Dedicated" + Path.DirectorySeparatorChar + session_id;
+			//if (Directory.Exists(path)) Directory.Delete(path);
 		}
 
 
