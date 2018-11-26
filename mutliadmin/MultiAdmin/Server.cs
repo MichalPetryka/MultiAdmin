@@ -162,7 +162,7 @@ namespace MultiAdmin.MultiAdmin
 					Write("Game engine exited/crashed/closed/restarting", ConsoleColor.Red);
 					Write("Cleaning Session", ConsoleColor.Red);
 					DeleteSession();
-					session_id = Utils.GetUnixTime().ToString();
+					//session_id = Utils.GetUnixTime().ToString();
 					Write("Restarting game with new session id");
 					StartServer();
 					InitFeatures();
