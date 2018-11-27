@@ -287,7 +287,7 @@ namespace MultiAdmin.MultiAdmin
 		{
 			if (ServerModCheck(1, 5, 0))
 			{
-				SendMessage("RECONNECTRS");
+				SendMessage("RESTART");
 				//session_id = Utils.GetUnixTime().ToString();
 			}
 			else
