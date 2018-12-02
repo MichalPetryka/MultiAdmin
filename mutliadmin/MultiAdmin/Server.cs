@@ -54,6 +54,7 @@ namespace MultiAdmin.MultiAdmin
 			printSpeed = multiAdminCfg.config.GetInt("multiadmin_print_speed", 150);
 			nolog = multiAdminCfg.config.GetBool("multiadmin_nolog", false);
 
+			// NEW COMMIT
 			// Register all features 
 			RegisterFeatures();
 			// Load config 
