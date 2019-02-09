@@ -1,8 +1,9 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiAdmin", "MultiAdmin/MultiAdmin.csproj", "{8384BF3C-5FC8-4395-A3DE-440C6C531D36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiAdmin", "MultiAdmin\MultiAdmin.csproj", "{F738F54F-2675-4A4E-B423-409481E4C40F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8384BF3C-5FC8-4395-A3DE-440C6C531D36}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{8384BF3C-5FC8-4395-A3DE-440C6C531D36}.Debug|Any CPU.Build.0 = Release|Any CPU
-		{8384BF3C-5FC8-4395-A3DE-440C6C531D36}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8384BF3C-5FC8-4395-A3DE-440C6C531D36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F738F54F-2675-4A4E-B423-409481E4C40F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F738F54F-2675-4A4E-B423-409481E4C40F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F738F54F-2675-4A4E-B423-409481E4C40F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F738F54F-2675-4A4E-B423-409481E4C40F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {07CC5FC6-4DFB-4CA5-9B8B-17B36431B6C9}
+		SolutionGuid = {9992113F-AF1B-4648-BF8C-EE42983626E8}
 	EndGlobalSection
 EndGlobal

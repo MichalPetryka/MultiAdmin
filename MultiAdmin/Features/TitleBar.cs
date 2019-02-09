@@ -61,9 +61,8 @@ namespace MultiAdmin.Features
 
 			int displayPlayerCount = playerCount < 0 ? 0 : playerCount;
 
-			List<string> titleBar = new List<string>();
+			List<string> titleBar = new List<string> {$"MultiAdmin {Server.MaVersion}"};
 
-			titleBar.Add($"MultiAdmin {Server.MaVersion}");
 
 			if (!string.IsNullOrEmpty(Server.serverId))
 				titleBar.Add($"Config: {Server.serverId}");

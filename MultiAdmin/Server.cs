@@ -433,7 +433,7 @@ namespace MultiAdmin
 				}
 				catch (ArgumentOutOfRangeException e)
 				{
-					new ColoredMessage[]
+					new[]
 					{
 						new ColoredMessage(Utils.TimeStampMessage($"Value {cursorTop} exceeded buffer height {bufferHeight}.")),
 						new ColoredMessage(e.StackTrace)
@@ -475,7 +475,7 @@ namespace MultiAdmin
 				}
 				catch (ArgumentOutOfRangeException e)
 				{
-					new ColoredMessage[]
+					new[]
 					{
 						new ColoredMessage(Utils.TimeStampMessage($"Value {cursorTop} exceeded buffer height {bufferHeight}.")),
 						new ColoredMessage(e.StackTrace)

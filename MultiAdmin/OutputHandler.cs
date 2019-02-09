@@ -151,7 +151,7 @@ namespace MultiAdmin
 				if (match.Groups.Count >= 3)
 				{
 					ConsoleColor levelColor = ConsoleColor.Cyan;
-					ConsoleColor tagColor = ConsoleColor.Yellow;
+					const ConsoleColor tagColor = ConsoleColor.Yellow;
 					ConsoleColor msgColor = ConsoleColor.White;
 					switch (match.Groups[1].Value.Trim())
 					{
@@ -173,11 +173,11 @@ namespace MultiAdmin
 							break;
 					}
 
-					server.Write(new ColoredMessage[]
+					server.Write(new[]
 					{
-						new ColoredMessage($"[{match.Groups[1].Value}] ", levelColor, DefaultBackground),
-						new ColoredMessage($"{match.Groups[2].Value} ", tagColor, DefaultBackground),
-						new ColoredMessage(match.Groups[3].Value, msgColor, DefaultBackground)
+						new ColoredMessage($"[{match.Groups[1].Value}] ", levelColor),
+						new ColoredMessage($"{match.Groups[2].Value} ", tagColor),
+						new ColoredMessage(match.Groups[3].Value, msgColor)
 					}, ConsoleColor.Cyan);
 
 					// P.S. the format is [Info] [courtney.exampleplugin] Something interesting happened
