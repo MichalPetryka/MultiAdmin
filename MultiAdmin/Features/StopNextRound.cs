@@ -1,8 +1,5 @@
-using MultiAdmin.Features.Attributes;
-
 namespace MultiAdmin.Features
 {
-	[Feature]
 	internal class StopNextRound : Feature, ICommand, IEventRoundEnd
 	{
 		private bool stop;

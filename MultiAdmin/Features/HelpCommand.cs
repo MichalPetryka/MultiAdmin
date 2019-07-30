@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using MultiAdmin.Features.Attributes;
 using MultiAdmin.Utility;
 
 namespace MultiAdmin.Features
 {
-	[Feature]
 	public class HelpCommand : Feature, ICommand
 	{
 		public HelpCommand(Server server) : base(server)

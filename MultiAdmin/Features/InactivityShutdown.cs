@@ -1,9 +1,7 @@
 using System;
-using MultiAdmin.Features.Attributes;
 
 namespace MultiAdmin.Features
 {
-	[Feature]
 	internal class InactivityShutdown : Feature, IEventRoundStart, IEventWaitingForPlayers, IEventTick
 	{
 		private DateTime queueStartTime;

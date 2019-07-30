@@ -15,19 +15,6 @@ namespace MultiAdmin.ServerIO
 		private readonly FileSystemWatcher fsWatcher;
 		private bool fixBuggedPlayers;
 
-		public static ConsoleColor MapConsoleColor(string color, ConsoleColor def = ConsoleColor.Cyan)
-		{
-			try
-			{
-				return (ConsoleColor)Enum.Parse(typeof(ConsoleColor), color);
-			}
-			catch (Exception e)
-			{
-				Program.LogDebugException(nameof(MapConsoleColor), e);
-				return def;
-			}
-		}
-
 		public OutputHandler(Server server)
 		{
 			if (server == null)

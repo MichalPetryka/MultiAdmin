@@ -3,12 +3,10 @@ using System.IO;
 using System.Text;
 using MultiAdmin.Config;
 using MultiAdmin.Config.ConfigHandler;
-using MultiAdmin.Features.Attributes;
 using MultiAdmin.Utility;
 
 namespace MultiAdmin.Features
 {
-	[Feature]
 	internal class GithubGenerator : Feature, ICommand
 	{
 		public const string EmptyIndicator = "**Empty**";

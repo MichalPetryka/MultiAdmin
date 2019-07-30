@@ -1,10 +1,8 @@
 using System;
-using MultiAdmin.Features.Attributes;
 using MultiAdmin.Utility;
 
 namespace MultiAdmin.Features
 {
-	[Feature]
 	internal class FileCopyRoundQueue : Feature, IEventRoundEnd
 	{
 		private string[] queue;

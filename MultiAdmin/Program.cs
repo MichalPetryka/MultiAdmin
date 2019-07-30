@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using MultiAdmin.Config;
 using MultiAdmin.ConsoleTools;
@@ -16,7 +15,6 @@ namespace MultiAdmin
 	public static class Program
 	{
 		public const string MaVersion = "3.2.2";
-		public const string RecommendedMonoVersion = "5.18.0";
 
 		private static readonly List<Server> InstantiatedServers = new List<Server>();
 
@@ -24,6 +22,7 @@ namespace MultiAdmin
 		private static readonly string MaDebugLogFile = !string.IsNullOrEmpty(MaDebugLogDir) ? Utils.GetFullPathSafe($"{MaDebugLogDir}{Path.DirectorySeparatorChar}{Utils.DateTime}_MA_{MaVersion}_debug_log.txt") : null;
 
 		private static uint? portArg;
+		private static bool exited;
 
 		private static IExitSignal exitSignalListener;
 
@@ -115,9 +114,10 @@ namespace MultiAdmin
 		{
 			lock (ExitLock)
 			{
-				if (MultiAdminConfig.GlobalConfig.SafeServerShutdown.Value)
+				if (!exited && MultiAdminConfig.GlobalConfig.SafeServerShutdown.Value)
 				{
 					Write("Stopping servers and exiting MultiAdmin...", ConsoleColor.DarkMagenta);
+					exited = true;
 
 					foreach (Server server in InstantiatedServers)
 					{
@@ -153,11 +153,7 @@ namespace MultiAdmin
 						}
 					}
 				}
-
-				// For some reason Mono hangs on this, but it works perfectly without it,
-				// but on Windows it doesn't close immediately unless this is here
-				if (Utils.IsWindows)
-					Environment.Exit(0);
+				Environment.Exit(0);
 			}
 		}
 
@@ -177,8 +173,6 @@ namespace MultiAdmin
 			}
 
 			Headless = GetFlagFromArgs("headless", "h");
-
-			CheckMonoVersion();
 
 			string serverIdArg = GetParamFromArgs("server-id", "id");
 			string configArg = GetParamFromArgs("config", "c");
@@ -263,13 +257,13 @@ namespace MultiAdmin
 
 			for (int i = 0; i < args.Length - 1; i++)
 			{
-				string lowArg = args[i]?.ToLower();
+				string arg = args[i];
 
-				if (string.IsNullOrEmpty(lowArg)) continue;
+				if (string.IsNullOrEmpty(arg)) continue;
 
 				if (hasKeys)
 				{
-					if (keys.Any(key => !string.IsNullOrEmpty(key) && lowArg == $"--{key.ToLower()}"))
+					if (keys.Any(key => !string.IsNullOrEmpty(key) && string.Equals(arg, $"--{key}", StringComparison.OrdinalIgnoreCase)))
 					{
 						return args[i + 1];
 					}
@@ -277,7 +271,7 @@ namespace MultiAdmin
 
 				if (hasAliases)
 				{
-					if (aliases.Any(alias => !string.IsNullOrEmpty(alias) && lowArg == $"-{alias.ToLower()}"))
+					if (aliases.Any(alias => !string.IsNullOrEmpty(alias) && string.Equals(arg, $"-{alias}", StringComparison.OrdinalIgnoreCase)))
 					{
 						return args[i + 1];
 					}
@@ -291,13 +285,11 @@ namespace MultiAdmin
 		{
 			foreach (string arg in Environment.GetCommandLineArgs())
 			{
-				string lowArg = arg?.ToLower();
-
-				if (string.IsNullOrEmpty(lowArg)) continue;
+				if (string.IsNullOrEmpty(arg)) continue;
 
 				if (!keys.IsNullOrEmpty())
 				{
-					if (keys.Any(key => !string.IsNullOrEmpty(key) && lowArg == $"--{key.ToLower()}"))
+					if (keys.Any(key => !string.IsNullOrEmpty(key) && string.Equals(arg, $"--{key}", StringComparison.OrdinalIgnoreCase)))
 					{
 						return true;
 					}
@@ -305,7 +297,7 @@ namespace MultiAdmin
 
 				if (!aliases.IsNullOrEmpty())
 				{
-					if (aliases.Any(alias => !string.IsNullOrEmpty(alias) && lowArg == $"-{alias.ToLower()}"))
+					if (aliases.Any(alias => !string.IsNullOrEmpty(alias) && string.Equals(arg, $"-{alias}", StringComparison.OrdinalIgnoreCase)))
 					{
 						return true;
 					}
@@ -339,9 +331,9 @@ namespace MultiAdmin
 
 		public static Process StartServer(Server server)
 		{
-			string assemblyLocation = Assembly.GetEntryAssembly()?.Location;
+			string assemblyLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.FriendlyName);
 
-			if (string.IsNullOrEmpty(assemblyLocation))
+			if (string.IsNullOrEmpty(assemblyLocation) || !File.Exists(assemblyLocation))
 			{
 				Write("Error while starting new server: Could not find the executable location!", ConsoleColor.Red);
 			}
@@ -370,41 +362,6 @@ namespace MultiAdmin
 			InstantiatedServers.Add(server);
 
 			return serverProcess;
-		}
-
-		private static bool IsVersionFormat(string input)
-		{
-			foreach (char character in input)
-			{
-				if (!char.IsNumber(character) && character != '.')
-					return false;
-			}
-
-			return true;
-		}
-
-		public static void CheckMonoVersion()
-		{
-			try
-			{
-				string monoVersionRaw = Type.GetType("Mono.Runtime")?.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static)?.Invoke(null, null)?.ToString();
-				string monoVersion = monoVersionRaw?.Split(' ').FirstOrDefault(IsVersionFormat);
-
-				if (string.IsNullOrEmpty(monoVersion))
-					return;
-
-				int versionDifference = Utils.CompareVersionStrings(monoVersion, RecommendedMonoVersion);
-
-				if (versionDifference >= 0 && (versionDifference != 0 || monoVersion.Length >= RecommendedMonoVersion.Length))
-					return;
-
-				Write($"Warning: Your Mono version ({monoVersion}) is below the recommended version ({RecommendedMonoVersion})", ConsoleColor.Red);
-				Write("Please update your Mono installation: https://www.mono-project.com/download/stable/", ConsoleColor.Red);
-			}
-			catch (Exception e)
-			{
-				LogDebugException(nameof(CheckMonoVersion), e);
-			}
 		}
 	}
 }

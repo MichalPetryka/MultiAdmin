@@ -1,10 +1,8 @@
 using System.IO;
-using MultiAdmin.Features.Attributes;
 using MultiAdmin.Utility;
 
 namespace MultiAdmin.Features
 {
-	[Feature]
 	internal class ModLog : Feature, IEventAdminAction
 	{
 		private bool logToOwnFile;

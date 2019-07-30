@@ -369,15 +369,16 @@ namespace MultiAdmin.ServerIO
 
 		#endregion
 
+		private static readonly ConsoleColor[] ConsoleColors = {ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGreen, ConsoleColor.DarkCyan, ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, ConsoleColor.DarkYellow, ConsoleColor.Gray, ConsoleColor.DarkGray, ConsoleColor.Blue, ConsoleColor.Green, ConsoleColor.Cyan, ConsoleColor.Red, ConsoleColor.Magenta, ConsoleColor.Yellow, ConsoleColor.White};
+
 		public static void RandomizeInputColors()
 		{
 			try
 			{
 				Random random = new Random();
-				Array colors = Enum.GetValues(typeof(ConsoleColor));
 
-				ConsoleColor random1 = (ConsoleColor)colors.GetValue(random.Next(colors.Length));
-				ConsoleColor random2 = (ConsoleColor)colors.GetValue(random.Next(colors.Length));
+				ConsoleColor random1 = ConsoleColors[random.Next(ConsoleColors.Length)];
+				ConsoleColor random2 = ConsoleColors[random.Next(ConsoleColors.Length)];
 
 				BaseSection.textColor = random1;
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using MultiAdmin.Config.ConfigHandler;
 using MultiAdmin.ConsoleTools;
 using MultiAdmin.ServerIO;
@@ -180,15 +179,39 @@ namespace MultiAdmin.Config
 			}
 
 			#region MultiAdmin Config Register
-
-			foreach (PropertyInfo property in GetType().GetProperties())
-			{
-				if (property.GetValue(this) is ConfigEntry entry)
-				{
-					RegisterConfig(entry);
-				}
-			}
-
+			RegisterConfig(ConfigLocation);
+			RegisterConfig(DisableConfigValidation);
+			RegisterConfig(ShareNonConfigs);
+			RegisterConfig(NoLog);
+			RegisterConfig(DebugLog);
+			RegisterConfig(DebugLogBlacklist);
+			RegisterConfig(DebugLogWhitelist);
+			RegisterConfig(UseNewInputSystem);
+			RegisterConfig(Port);
+			RegisterConfig(CopyFromFolderOnReload);
+			RegisterConfig(FolderCopyWhitelist);
+			RegisterConfig(FolderCopyBlacklist);
+			RegisterConfig(FolderCopyRoundQueue);
+			RegisterConfig(FolderCopyRoundQueueWhitelist);
+			RegisterConfig(FolderCopyRoundQueueBlacklist);
+			RegisterConfig(RandomizeFolderCopyRoundQueue);
+			RegisterConfig(LogModActionsToOwnFile);
+			RegisterConfig(ManualStart);
+			RegisterConfig(MaxMemory);
+			RegisterConfig(RestartLowMemory);
+			RegisterConfig(RestartLowMemoryRoundEnd);
+			RegisterConfig(MaxPlayers);
+			RegisterConfig(RandomInputColors);
+			RegisterConfig(RestartEveryNumRounds);
+			RegisterConfig(SafeServerShutdown);
+			RegisterConfig(SafeShutdownCheckDelay);
+			RegisterConfig(SafeShutdownTimeout);
+			RegisterConfig(ServerRestartTimeout);
+			RegisterConfig(ServerStopTimeout);
+			RegisterConfig(ServersFolder);
+			RegisterConfig(SetTitleBar);
+			RegisterConfig(ShutdownWhenEmptyFor);
+			RegisterConfig(StartConfigOnFull);
 			#endregion
 
 			ReloadConfig();
@@ -271,7 +294,7 @@ namespace MultiAdmin.Config
 
 				default:
 				{
-					throw new ArgumentException($"Config type unsupported (Config: Key = \"{configEntry.Key ?? "Null"}\" Type = \"{configEntry.ValueType.FullName ?? "Null"}\" Name = \"{configEntry.Name ?? "Null"}\" Description = \"{configEntry.Description ?? "Null"}\").", nameof(configEntry));
+					throw new ArgumentException($"Config type unsupported (Config: Key = \"{configEntry.Key ?? "Null"}\" Type = \"{configEntry.ValueType?.FullName ?? "Null"}\" Name = \"{configEntry.Name ?? "Null"}\" Description = \"{configEntry.Description ?? "Null"}\").", nameof(configEntry));
 				}
 			}
 		}

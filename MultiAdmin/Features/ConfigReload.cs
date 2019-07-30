@@ -1,9 +1,8 @@
-using MultiAdmin.Features.Attributes;
+using System;
 using MultiAdmin.Utility;
 
 namespace MultiAdmin.Features
 {
-	[Feature]
 	internal class ConfigReload : Feature, ICommand
 	{
 		public ConfigReload(Server server) : base(server)
@@ -27,7 +26,7 @@ namespace MultiAdmin.Features
 
 		public void OnCall(string[] args)
 		{
-			if (args.IsNullOrEmpty() || !args[0].ToLower().Equals("reload")) return;
+			if (args.IsNullOrEmpty() || !string.Equals(args[0], "reload", StringComparison.OrdinalIgnoreCase)) return;
 
 			Server.Write("Reloading configs...");
 

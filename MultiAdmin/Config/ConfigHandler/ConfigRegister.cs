@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace MultiAdmin.Config.ConfigHandler
@@ -29,11 +30,9 @@ namespace MultiAdmin.Config.ConfigHandler
 			if (string.IsNullOrEmpty(key))
 				return null;
 
-			key = key.ToLower();
-
 			foreach (ConfigEntry registeredConfig in registeredConfigs)
 			{
-				if (key == registeredConfig.Key.ToLower())
+				if (string.Equals(key, registeredConfig.Key, StringComparison.OrdinalIgnoreCase))
 					return registeredConfig;
 			}
 

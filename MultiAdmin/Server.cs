@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using MultiAdmin.Config;
 using MultiAdmin.ConsoleTools;
-using MultiAdmin.Features.Attributes;
+using MultiAdmin.Features;
 using MultiAdmin.ServerIO;
 using MultiAdmin.Utility;
 
@@ -474,33 +472,23 @@ namespace MultiAdmin
 			features.Add(feature);
 		}
 
-		private static IEnumerable<Type> GetTypesWithAttribute(Type attribute)
-		{
-			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				foreach (Type type in assembly.GetTypes())
-				{
-					object[] attributes = type.GetCustomAttributes(attribute, true);
-					if (!attributes.IsEmpty()) yield return type;
-				}
-			}
-		}
-
 		private void RegisterFeatures()
 		{
-			Type[] assembly = GetTypesWithAttribute(typeof(FeatureAttribute)).ToArray();
-			foreach (Type type in assembly)
-			{
-				try
-				{
-					object featureInstance = Activator.CreateInstance(type, this);
-					if (featureInstance is Feature feature) RegisterFeature(feature);
-				}
-				catch (Exception e)
-				{
-					Program.LogDebugException(nameof(RegisterFeatures), e);
-				}
-			}
+			RegisterFeature(new ConfigReload(this));
+			RegisterFeature(new ExitCommand(this));
+			RegisterFeature(new FileCopyRoundQueue(this));
+			RegisterFeature(new GithubGenerator(this));
+			RegisterFeature(new HelpCommand(this));
+			RegisterFeature(new InactivityShutdown(this));
+			RegisterFeature(new MemoryChecker(this));
+			RegisterFeature(new ModLog(this));
+			RegisterFeature(new MultiAdminInfo(this));
+			RegisterFeature(new NewCommand(this));
+			RegisterFeature(new Restart(this));
+			RegisterFeature(new RestartNextRound(this));
+			RegisterFeature(new RestartRoundCounter(this));
+			RegisterFeature(new StopNextRound(this));
+			RegisterFeature(new Titlebar(this));
 		}
 
 		private void InitFeatures()

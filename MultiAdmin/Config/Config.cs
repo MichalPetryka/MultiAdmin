@@ -60,7 +60,7 @@ namespace MultiAdmin.Config
 
 		public bool Contains(string key)
 		{
-			return rawData != null && rawData.Any(entry => entry.StartsWith($"{key}:", StringComparison.CurrentCultureIgnoreCase));
+			return rawData != null && rawData.Any(entry => entry.StartsWith($"{key}:", StringComparison.OrdinalIgnoreCase));
 		}
 
 		private static string CleanValue(string value)
@@ -88,7 +88,7 @@ namespace MultiAdmin.Config
 			{
 				foreach (string line in rawData)
 				{
-					if (!line.ToLower().StartsWith(key.ToLower() + ":")) continue;
+					if (!line.StartsWith(key + ":", StringComparison.OrdinalIgnoreCase)) continue;
 
 					try
 					{
@@ -114,7 +114,7 @@ namespace MultiAdmin.Config
 			{
 				foreach (string line in rawData)
 				{
-					if (!line.ToLower().StartsWith(key.ToLower() + ":")) continue;
+					if (!line.StartsWith(key + ":", StringComparison.OrdinalIgnoreCase)) continue;
 
 					try
 					{
